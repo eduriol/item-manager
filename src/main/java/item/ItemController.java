@@ -1,5 +1,8 @@
 package item;
 
+import lombok.Data;
+import lombok.Getter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -7,34 +10,34 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-class ItemController {
+public class ItemController {
 
-    private final List<Item> repository;
+    private final List<Item> itemRepository;
 
     public ItemController() throws IOException {
-        this.repository = new ArrayList<>();
+        this.itemRepository = new ArrayList<>();
         //set up some example items
-        this.repository.add(Item.fromFile("src/main/resources/item1.json"));
-        this.repository.add(Item.fromFile("src/main/resources/item2.json"));
-        this.repository.add(Item.fromFile("src/main/resources/item3.json"));
-        this.repository.add(Item.fromFile("src/main/resources/item4.json"));
-        this.repository.add(Item.fromFile("src/main/resources/item5.json"));
+        this.itemRepository.add(Item.fromFile("src/main/resources/item1.json"));
+        this.itemRepository.add(Item.fromFile("src/main/resources/item2.json"));
+        this.itemRepository.add(Item.fromFile("src/main/resources/item3.json"));
+        this.itemRepository.add(Item.fromFile("src/main/resources/item4.json"));
+        this.itemRepository.add(Item.fromFile("src/main/resources/item5.json"));
     }
 
     @CrossOrigin(origins = "http://localhost:8000")
     @GetMapping("/items")
-    List<Item> getAllItems() {
-        return repository;
+    public List<Item> getAllItems() {
+        return itemRepository;
     }
 
     @PostMapping("/item")
-    void addBuyer(@RequestBody Item newItem) {
-        repository.add(newItem);
+    public void addItem(@RequestBody Item newItem) {
+        itemRepository.add(newItem);
     }
 
     @GetMapping("/item/{id}")
-    Item getItem(@PathVariable Long id) {
-        for (Item item: repository) {
+    public Item getItem(@PathVariable Long id) {
+        for (Item item: itemRepository) {
             if (item.getId().equals(id)) {
                 return item;
             }
@@ -43,19 +46,22 @@ class ItemController {
     }
 
     @PutMapping("/item/{id}")
-    void replaceItem(@RequestBody Item newItem, @PathVariable Long id) {
-        for (Item item : repository) {
+    public void replaceItem(@RequestBody Item newItem, @PathVariable Long id) {
+        for (Item item : itemRepository) {
             if (item.getId().equals(id)) {
-                item = newItem;
+                itemRepository.remove(item);
+                itemRepository.add(newItem);
+                break;
             }
         }
     }
 
     @DeleteMapping("/item/{id}")
-    void deleteItem(@PathVariable Long id){
-            for (Item item : repository) {
+    public void deleteItem(@PathVariable Long id){
+            for (Item item : itemRepository) {
                 if (item.getId().equals(id)) {
-                    repository.remove(item);
+                    itemRepository.remove(item);
+                    break;
                 }
             }
         }
