@@ -1,4 +1,4 @@
-package item;
+package item.entities;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
